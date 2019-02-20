@@ -2,10 +2,11 @@
 # Name: Marije Brandsma
 # Student number: 11389257
 """
-This script parses a database and analyzes/visualizes the data in it.
+This script parses a database and analyzes and visualizes the data in it.
 """
 
 import csv
+import json
 import matplotlib.pyplot as plt
 import pandas
 from requests import get
@@ -15,6 +16,14 @@ from bs4 import BeautifulSoup
 
 INPUT_CSV = 'input.csv'
 OUTPUT_CSV = 'data.csv'
+
+def json_convert(dataframe):
+    """
+    Converts Pandas DataFrame to JSON file and stores it on disk.
+    """
+    json_file = data.to_json(orient='records', index=True)
+    with open('data.json', 'w') as outfile:
+        json.dump(json_file, outfile)
 
 def read_csv(infile):
     """
@@ -79,9 +88,8 @@ def make_dataframe(infile):
     """
     Changes clean data to pandas format.
     """
-
+    # Converts clean data to Pandas DataFrame
     data = pandas.read_csv(clean_data)
-
     return(data)
 
 
@@ -89,13 +97,15 @@ def save_csv(outfile):
     """
     Output a CSV file with the parsed data of the infile.
     """
+    # Writes headers to outfile
     writer = csv.writer(outfile)
     writer.writerow(['Country', 'Region', 'Pop. Density (per sq. mi.)', 'Infant mortality (per 1000 births)', 'GDP ($ per capita) dollars'])
 
+    # Cleans data and stores data to list
     with open(INPUT_CSV, 'r', newline='') as input_file:
         clean_data = read_csv(input_file)
-        print(clean_data)
 
+    # Saves data in outfile
     for country in clean_data:
         writer.writerow([country['country'], country['region'], country['pop_density'], country['inf_mortality'], country['gdp']])
 
@@ -103,7 +113,6 @@ def visualizer(data):
     """
     Analyzes and visualizes data.
     """
-
     # Calculates central tendencies of GDP.
     print("\n----------- Central Tendency of GDP -----------\n")
     print("Mean of GDP: %i dollars" % (data['GDP ($ per capita) dollars'].mean()))
@@ -118,7 +127,15 @@ def visualizer(data):
         rwidth=0.8)
     plt.show()
 
-    # Calculates five number summary of Infant Mortality through a boxplot
+    # Calculates five number summary of Infant Mortality
+    print("\n----------- Five Number Summary of Infant Mortality -----------\n")
+    print("Minimum of Infant Mortality: %i per 1000 births" % (data['Infant mortality (per 1000 births)'].min()))
+    #print("First quartile of Infant Mortality: %i per 1000 births" % (data['Infant mortality (per 1000 births)'].quartile(0.25)))
+    #print("Median of Infant Mortality: %f per 1000 births" % (data['Infant mortality (per 1000 births)'].quartile(0.50)))
+    #print("Third quartile of Infant Mortality: %f per 1000 births" % (data['Infant mortality (per 1000 births)'].quartile(0.75)))
+    print("Maximum of Infant Mortality: %i per 1000 births" % (data['Infant mortality (per 1000 births)'].max()))
+
+    # Prints a boxplot of Infant Mortality
     boxplot = data.boxplot(column=['Infant mortality (per 1000 births)'])
     plt.show()
 
@@ -134,3 +151,6 @@ if __name__ == "__main__":
 
     # Analyzes data
     visualizer(data)
+
+    # Converts data to JSON-file
+    json_convert(data)

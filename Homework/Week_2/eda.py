@@ -118,6 +118,9 @@ def visualizer(data):
         rwidth=0.8)
     plt.show()
 
+    # Calculates five number summary of Infant Mortality through a boxplot
+    boxplot = data.boxplot(column=['Infant mortality (per 1000 births)'])
+    plt.show()
 
 
 if __name__ == "__main__":

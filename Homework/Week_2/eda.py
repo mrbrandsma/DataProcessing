@@ -6,6 +6,7 @@ This script parses a database and analyzes/visualizes the data in it.
 """
 
 import csv
+import matplotlib.pyplot as plt
 import pandas
 from requests import get
 from requests.exceptions import RequestException
@@ -102,11 +103,21 @@ def visualizer(data):
     """
     Analyzes and visualizes data.
     """
+
+    # Calculates central tendencies of GDP.
     print("\n----------- Central Tendency of GDP -----------\n")
     print("Mean of GDP: %i dollars" % (data['GDP ($ per capita) dollars'].mean()))
     print("Median of GDP: %i dollars" % (data['GDP ($ per capita) dollars'].median()))
     print("Mode of GDP: %i dollars" % (data['GDP ($ per capita) dollars'].mode()))
     print("Standard Deviation of GDP: %i" % (data['GDP ($ per capita) dollars'].std()))
+
+    # Prints a histogram of the GDP, removes values above 50000 (outliers)
+    histogram_GDP = data[['GDP ($ per capita) dollars']].plot(
+        kind='hist',
+        bins=[0,5000,10000,15000,20000,25000,30000,35000,40000,45000,50000],
+        rwidth=0.8)
+    plt.show()
+
 
 
 if __name__ == "__main__":
@@ -114,9 +125,9 @@ if __name__ == "__main__":
     with open(OUTPUT_CSV, 'w', newline='') as output_file:
         save_csv(output_file)
 
+    # Creates pandas dataframe
     clean_data = 'data.csv'
     data = make_dataframe(clean_data)
-    print("EINDRESULTAAT:")
-    print(data)
 
+    # Analyzes data
     visualizer(data)

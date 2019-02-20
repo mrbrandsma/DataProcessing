@@ -80,8 +80,8 @@ def make_dataframe(infile):
     """
 
     data = pandas.read_csv(clean_data)
-    print("Clean data pd:")
-    print(data)
+
+    return(data)
 
 
 def save_csv(outfile):
@@ -98,6 +98,16 @@ def save_csv(outfile):
     for country in clean_data:
         writer.writerow([country['country'], country['region'], country['pop_density'], country['inf_mortality'], country['gdp']])
 
+def visualizer(data):
+    """
+    Analyzes and visualizes data.
+    """
+    print("\n----------- Central Tendency of GDP -----------\n")
+    print("Mean of GDP: %i dollars" % (data['GDP ($ per capita) dollars'].mean()))
+    print("Median of GDP: %i dollars" % (data['GDP ($ per capita) dollars'].median()))
+    print("Mode of GDP: %i dollars" % (data['GDP ($ per capita) dollars'].mode()))
+    print("Standard Deviation of GDP: %i" % (data['GDP ($ per capita) dollars'].std()))
+
 
 if __name__ == "__main__":
     # Writes the CSV file to the disk
@@ -105,4 +115,8 @@ if __name__ == "__main__":
         save_csv(output_file)
 
     clean_data = 'data.csv'
-    make_dataframe(clean_data)
+    data = make_dataframe(clean_data)
+    print("EINDRESULTAAT:")
+    print(data)
+
+    visualizer(data)
